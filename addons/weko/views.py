@@ -7,14 +7,16 @@ import re
 from lxml import etree
 
 from flask import request
-from flask import redirect
 
 from framework.auth.decorators import must_be_logged_in
 from framework.exceptions import HTTPError
+from django.core.exceptions import ValidationError
+from osf.models import ExternalAccount
 
 from addons.base import generic_views
 from addons.weko import client
 from addons.weko.serializer import WEKOSerializer
+from addons.weko.provider import WEKOProvider
 from addons.weko import settings as weko_settings
 from website.util import permissions
 from website.project.decorators import (
@@ -25,33 +27,9 @@ from website.project.decorators import (
 
 from website.util import rubeus, api_url_for
 from website.util.sanitize import assert_clean
-from website.oauth.utils import get_service
-from website.oauth.signals import oauth_complete
 
 SHORT_NAME = 'weko'
 FULL_NAME = 'WEKO'
-
-@must_be_logged_in
-def weko_oauth_connect(repoid, auth):
-    service = get_service(SHORT_NAME)
-    return redirect(service.get_repo_auth_url(repoid))
-
-@must_be_logged_in
-def weko_oauth_callback(repoid, auth):
-    user = auth.user
-    provider = get_service(SHORT_NAME)
-
-    # Retrieve permanent credentials from provider
-    if not provider.repo_auth_callback(user=user, repoid=repoid):
-        return {}
-
-    if provider.account and not user.external_accounts.filter(id=provider.account.id).exists():
-        user.external_accounts.add(provider.account)
-        user.save()
-
-    oauth_complete.send(provider, account=provider.account, user=user)
-
-    return {}
 
 
 weko_account_list = generic_views.account_list(
@@ -91,8 +69,7 @@ def weko_user_config_get(auth, **kwargs):
             'userHasAuth': user_has_auth,
             'urls': {
                 'accounts': api_url_for('weko_account_list'),
-            },
-            'repositories': weko_settings.REPOSITORY_IDS
+            }
         },
     }, http.OK
 
@@ -130,6 +107,58 @@ def weko_set_config(node_addon, user_addon, auth, **kwargs):
     node_addon.set_folder(index, auth)
 
     return {'index': index.title}, http.OK
+
+@must_be_logged_in
+def weko_add_user_account(auth, **kwargs):
+    """Verifies new external account credentials and adds to user's list"""
+    try:
+        sword_url = request.json['sword_url']
+        access_key = request.json['access_key']
+        secret_key = request.json['secret_key']
+    except KeyError:
+        raise HTTPError(http.BAD_REQUEST)
+
+    if not (sword_url and access_key and secret_key):
+        return {
+            'message': 'All the fields above are required.'
+        }, http.BAD_REQUEST
+
+    try:
+        user_info = client.connect_or_error(sword_url,
+                                            access_key,
+                                            secret_key).get_login_user()
+    except (HTTPError, IOError):
+        user_info = None
+    if not user_info:
+        return {
+            'message': ('Unable to access account.\n'
+                'Check to make sure that the above credentials are valid, '
+                'and that they have permission to list indices.')
+        }, http.BAD_REQUEST
+
+    provider = WEKOProvider(account=None, sword_url=sword_url,
+                             username=access_key, password=secret_key)
+    try:
+        provider.account.save()
+    except ValidationError:
+        # ... or get the old one
+        provider.account = ExternalAccount.objects.get(
+            provider=SHORT_NAME,
+            provider_id='{}:{}'.format(sword_url, access_key).lower()
+        )
+        if provider.account.oauth_key != secret_key:
+            provider.account.oauth_key = secret_key
+            provider.account.save()
+    assert provider.account is not None
+
+    if not auth.user.external_accounts.filter(id=provider.account.id).exists():
+        auth.user.external_accounts.add(provider.account)
+
+    # Ensure WEKO is enabled.
+    auth.user.get_or_add_addon('weko', auth=auth)
+    auth.user.save()
+
+    return {}
 
 ## Crud ##
 

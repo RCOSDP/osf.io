@@ -4,26 +4,6 @@
 
 [Apache License Version 2.0](LICENSE) © 2017 National Institute of Informatics
 
-## Setting up WEKO Add-on
-
-You should change `addons/weko/settings/local.py` as below:
-
-```
-REPOSITORIES = {'sample.repo.nii.ac.jp':
-                 {'host': 'http://sample.repo.nii.ac.jp/weko/sword/',
-                  'client_id': 'testclient2016a', 'client_secret': 'testpass2016a',
-                  'authorize_url': 'http://sample.repo.nii.ac.jp/oauth/authorize.php',
-                  'access_token_url': 'http://sample.repo.nii.ac.jp/oauth/token.php'}}
-REPOSITORY_IDS = list(sorted(REPOSITORIES.keys()))
-```
-
-If `REPOSITORIES` includes non-HTTPS sites,
-you should set the `OAUTHLIB_INSECURE_TRANSPORT` environment variable for osf.io:
-
-```
-OAUTHLIB_INSECURE_TRANSPORT=1
-```
-
 ## Linking an index on WEKO with your project
 
 1. Go to user settings. Under "Add-ons", select "WEKO" and click submit.

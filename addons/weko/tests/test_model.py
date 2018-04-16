@@ -73,8 +73,8 @@ class TestNodeSettings(OAuthAddonNodeSettingsTestSuiteMixin, unittest.TestCase):
         self.user_settings.save()
         credentials = self.node_settings.serialize_waterbutler_credentials()
 
-        expected = {'token': self.node_settings.external_account.oauth_key,
-                    'user_id': self.node_settings.external_account.provider_id.split(':')[1]}
+        expected = {'password': self.node_settings.external_account.oauth_key,
+                    'user_id': self.node_settings.external_account.display_name}
         assert_equal(credentials, expected)
 
     def test_create_log(self):

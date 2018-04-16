@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from addons.base.tests.base import OAuthAddonTestCaseMixin, AddonTestCase
-from addons.weko.models import WEKOProvider
+from addons.weko.provider import WEKOProvider
 from addons.weko.serializer import WEKOSerializer
 from addons.weko.tests.factories import WEKOAccountFactory
 

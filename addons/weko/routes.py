@@ -1,25 +1,6 @@
 from framework.routing import Rule, json_renderer, xml_renderer
-from website.routes import OsfWebRenderer
 
 from . import views
-
-oauth_routes = {
-    'rules': [
-        Rule(
-            '/connect/weko/<repoid>/',
-            'get',
-            views.weko_oauth_connect,
-            json_renderer,
-        ),
-        Rule(
-            '/callback/weko/<repoid>/',
-            'get',
-            views.weko_oauth_callback,
-            OsfWebRenderer('util/oauth_complete.mako', trust=False),
-        ),
-    ],
-    'prefix': '/oauth'
-}
 
 api_routes = {
     'rules': [
@@ -27,6 +8,14 @@ api_routes = {
             '/settings/weko/',
             'get',
             views.weko_user_config_get,
+            json_renderer,
+        ),
+        Rule(
+            [
+                '/settings/weko/accounts/',
+            ],
+            'post',
+            views.weko_add_user_account,
             json_renderer,
         ),
         Rule(

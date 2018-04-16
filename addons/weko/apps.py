@@ -50,7 +50,7 @@ class WEKOAddonAppConfig(BaseAddonAppConfig):
     @property
     def routes(self):
         from . import routes
-        return [routes.oauth_routes, routes.api_routes]
+        return [routes.api_routes]
 
     @property
     def user_settings(self):

@@ -3,30 +3,29 @@
         <div class="modal-content">
 
             <div class="modal-header">
-                <h3>Select a WEKO repository</h3>
+                <h3>Connect a WEKO Account</h3>
             </div>
 
             <form>
                 <div class="modal-body">
 
                     <div class="row">
+                        <div class="col-sm-3"></div>
 
                         <div class="col-sm-6">
-
-                            <!-- Select WEKO installation -->
                             <div class="form-group">
-                                <label for="hostSelect">WEKO Repository</label>
-                                <select class="form-control"
-                                        id="hostSelect"
-                                        data-bind="options: repositories,
-                                                   optionsCaption: 'Select a WEKO repository',
-                                                   value: selectedRepo,
-                                                   event: { change: selectionChanged }">
-                                </select>
+                                <label for="wekoAddon">WEKO SWORD URL</label>
+                                <input class="form-control" data-bind="value: swordUrl" id="sword_url" name="sword_url" ${'disabled' if disabled else ''} />
                             </div>
-
+                            <div class="form-group">
+                                <label for="wekoAddon">WEKO Username</label>
+                                <input class="form-control" data-bind="value: accessKey" id="access_key" name="access_key" ${'disabled' if disabled else ''} />
+                            </div>
+                            <div class="form-group">
+                                <label for="wekoAddon">WEKO Password</label>
+                                <input type="password" class="form-control" data-bind="value: secretKey" id="secret_key" name="secret_key" ${'disabled' if disabled else ''} />
+                            </div>
                         </div>
-
                     </div><!-- end row -->
 
                     <!-- Flashed Messages -->
@@ -41,7 +40,7 @@
                     <a href="#" class="btn btn-default" data-bind="click: clearModal" data-dismiss="modal">Cancel</a>
 
                     <!-- Save Button -->
-                    <button data-bind="click: connectOAuth" class="btn btn-success">Connect</button>
+                    <button data-bind="click: connectAccount" class="btn btn-success">Save</button>
 
                 </div><!-- end modal-footer -->
 
