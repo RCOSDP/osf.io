@@ -11,7 +11,7 @@
     </div>
 
     <div class="col-sm-9 col-md-7">
-        <div class="panel panel-default scripted" id="selectLists" style="display: none;">
+        <div class="panel panel-default scripted" id="selectLists" style="display: none !important;">
             <div class="panel-heading clearfix"><h3 class="panel-title">Configure Email Preferences</h3></div>
             <div class="panel-body">
                  <h3>Emails</h3>
