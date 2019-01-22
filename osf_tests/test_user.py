@@ -1592,9 +1592,7 @@ class TestUserMerging(OsfTestCase):
                 'shared_gt': True,
                 'shared_lt': True,
             },
-            'osf_mailing_lists': {
-                'GakuNin RDM Help': True
-            },
+            'osf_mailing_lists': {},
             'security_messages': {
                 'user': today,
                 'other': today,
