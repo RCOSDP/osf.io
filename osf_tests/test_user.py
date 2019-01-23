@@ -1592,7 +1592,9 @@ class TestUserMerging(OsfTestCase):
                 'shared_gt': True,
                 'shared_lt': True,
             },
-            'osf_mailing_lists': {},
+            'osf_mailing_lists': {
+                'Open Science Framework Help': True
+            },
             'security_messages': {
                 'user': today,
                 'other': today,
