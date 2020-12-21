@@ -45,4 +45,5 @@ class NodeSettings(BaseNodeSettings):
 
         instance.add_addon(SHORT_NAME, auth=None, log=False)
 
-
+    def get_dmr_api_key(self):
+        return settings.DMR_API_KEY
