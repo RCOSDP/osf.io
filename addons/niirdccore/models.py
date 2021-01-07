@@ -25,11 +25,11 @@ class NodeSettings(BaseNodeSettings):
 
     def get_dmr_api_key(self):
         return settings.DMR_API_KEY
-    
+
     def set_dmp_id(self, dmp_id):
         self.dmp_id = dmp_id
         self.save()
-    
+
     def get_dmp_id(self):
         return self.dmp_id
 
@@ -56,3 +56,40 @@ class NodeSettings(BaseNodeSettings):
             return
 
         instance.add_addon(SHORT_NAME, auth=None, log=False)
+
+class AddonList(BaseNodeSettings):
+    """
+    送信先アドオンリストに関するモデルを定義する。
+    """
+    owner    = models.ForeignKey("NodeSettings", null=True, blank=True, related_name="node")
+    node_title = models.CharField(max_length=100)
+    addon_id = models.CharField(max_length=50)
+    callback = models.CharField(max_length=100)
+
+    def get_owner(self):
+        return self.owner
+
+    def set_owner(self, owner):
+        self.owner = owner
+        self.save()
+
+    def get_node_title(self):
+        return node_title
+
+    def set_node_title(self, node_title):
+        self.node_title = node_title
+        self.save()
+
+    def get_addon_id(self):
+        return self.addon_id
+
+    def set_addon_id(self, addon_id):
+        self.addon_id = addon_id
+        self.save()
+
+    def get_callback(self):
+        return self.callback
+
+    def set_callback(self, callback):
+        self.callback = callback
+        self.save()
