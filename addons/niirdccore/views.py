@@ -13,6 +13,7 @@ from website.project.decorators import (
     must_have_addon,
 )
 from addons.jupyterhub.apps import JupyterhubAddonAppConfig
+from addons.niirdccore.models import AddonList
 
 logger = logging.getLogger(__name__)
 
@@ -61,3 +62,16 @@ def niirdccore_get_dmp_info(**kwargs):
     return {'data': {'id': node._id, 'type': 'dmp-status',
                     'attributes': dmp_info.text}}
 
+@must_be_valid_project
+@must_have_permission('admin')
+@must_have_addon(SHORT_NAME, 'node')
+def niirdccore_apply_dmp_subscribe(**kwargs):
+    node = kwargs['node']
+
+    addon_list = AddonList()
+
+    addon_list.set_addon_id(kwargs['addon_id'])
+    addon_list.set_callback(kwargs['callback'])
+    addon_list.set_owner(node.get_addon(SHORT_NAME))
+
+    return
